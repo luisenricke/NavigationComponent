@@ -1,12 +1,12 @@
-package com.luisenricke.navigationcomponent
+package com.luisenricke.navigationcomponent.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.luisenricke.navigationcomponent.R
 
-class SecondFragment : Fragment() {
+class SecondFragment : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -15,6 +15,5 @@ class SecondFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_second, container, false)
     }
-
 
 }
