@@ -1,7 +1,6 @@
 package com.luisenricke.navigationcomponent
 
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
@@ -10,14 +9,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
-import timber.log.Timber
 
-class MainActivity : AppCompatActivity(),
-    NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity()/*,
+    NavigationView.OnNavigationItemSelectedListener*/ {
 
-    private val whichStack: Stack = Stack.SEQUENCE
+//    private val whichStack: Stack = Stack.SEQUENCE
+
     private lateinit var navController: NavController
     private lateinit var appBarConfig: AppBarConfiguration
 
@@ -38,14 +36,27 @@ class MainActivity : AppCompatActivity(),
 
         setupActionBarWithNavController(this, navController, appBarConfig)
         navigation.setupWithNavController(navController)
-        navigation.setNavigationItemSelectedListener(this)
+//        navigation.setNavigationItemSelectedListener(this)
 
         this.takeIf { savedInstanceState == null }.also {
-            navigation.menu.findItem(R.id.menu_first).isChecked = true
+            navigation.menu.findItem(R.id.fragment_first).isChecked = true
         }
     }
 
+    override fun onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfig) || super.onSupportNavigateUp()
+    }
+
+//    region without tie destinations to menu items
+/*
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         item.isChecked = true
         drawer.closeDrawers()
@@ -83,14 +94,13 @@ class MainActivity : AppCompatActivity(),
             navigation.menu.findItem(idSelected).isChecked = true
         }
     }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfig) || super.onSupportNavigateUp()
-    }
+ */
 
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 //        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
 //    }
 
-    enum class Stack { HOME, SEQUENCE }
+//    enum class Stack { HOME, SEQUENCE }
+
+//    endregion
 }
