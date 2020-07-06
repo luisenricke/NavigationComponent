@@ -1,43 +1,50 @@
 package com.luisenricke.navigationcomponent
 
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import timber.log.Timber
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(),
+class MainActivity : AppCompatActivity()/*,
     BottomNavigationView.OnNavigationItemSelectedListener,
-    BottomNavigationView.OnNavigationItemReselectedListener {
+    BottomNavigationView.OnNavigationItemReselectedListener*/ {
 
-    private val whichStack: Stack = Stack.SEQUENCE
+//    private val whichStack: Stack = Stack.HOME
 
-    private val bottomNavigation: BottomNavigationView by lazy {
-        findViewById<BottomNavigationView>(R.id.bottom)
-    }
-
-    private val navController: NavController by lazy {
-        (supportFragmentManager.findFragmentById(R.id.fragment_host) as NavHostFragment)
-            .navController
-    }
-    private val appBarConfig: AppBarConfiguration by lazy {
-        AppBarConfiguration(setOf(R.id.menu_first, R.id.menu_second, R.id.menu_third))
-    }
+    private lateinit var navController: NavController
+    private lateinit var appBarConfig: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        bottomNavigation.setupWithNavController(navController)
-        bottomNavigation.setOnNavigationItemSelectedListener(this)
-        bottomNavigation.setOnNavigationItemReselectedListener(this)
+        navController = (supportFragmentManager
+            .findFragmentById(R.id.fragment_host) as NavHostFragment)
+            .navController
+
+        appBarConfig = AppBarConfiguration(
+            setOf(R.id.fragment_first, R.id.fragment_second, R.id.fragment_third)
+        )
+
+        bottom.setupWithNavController(navController)
+//        bottom.setOnNavigationItemSelectedListener(this)
+//        bottom.setOnNavigationItemReselectedListener(this)
+
+        this.takeIf { savedInstanceState == null }.also {
+            bottom.menu.findItem(R.id.fragment_first).isChecked = true
+        }
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfig) || super.onSupportNavigateUp()
+    }
+
+//    region without tie destinations to menu items
+    /*
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         item.isChecked = true
 
@@ -68,28 +75,30 @@ class MainActivity : AppCompatActivity(),
 
         when (whichStack) {
             Stack.HOME -> {
-                bottomNavigation.menu.findItem(R.id.menu_first)
+                bottom.menu.findItem(R.id.fragment_first)
                     .takeIf { !it.isChecked }
                     ?.run { isChecked = true }
             }
 
             Stack.SEQUENCE -> {
-                bottomNavigation.selectedItemId = when (navController.currentDestination?.id) {
-                    R.id.fragment_first -> bottomNavigation.menu.findItem(R.id.menu_first).itemId
-                    R.id.fragment_second -> bottomNavigation.menu.findItem(R.id.menu_second).itemId
-                    R.id.fragment_third -> bottomNavigation.menu.findItem(R.id.menu_third).itemId
+                bottom.selectedItemId = when (navController.currentDestination?.id) {
+                    R.id.fragment_first -> bottom.menu.findItem(R.id.fragment_first).itemId
+                    R.id.fragment_second -> bottom.menu.findItem(R.id.fragment_second).itemId
+                    R.id.fragment_third -> bottom.menu.findItem(R.id.fragment_third).itemId
                     null -> 0.also { Timber.d("Empty stack") }
                     else -> (-1).also { Timber.e("Item doesn't find") }
                 }.also { navController.popBackStack() }
             }
         }
     }
+*/
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfig) || super.onSupportNavigateUp()
-    }
 
-    enum class Stack {
-        HOME, SEQUENCE
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+//    }
+
+//    enum class Stack { HOME, SEQUENCE }
+
+//    endregion
 }
